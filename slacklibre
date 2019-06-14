@@ -1,0 +1,89 @@
+#!/bin/bash
+#==================================== HEADER ========================|
+#AUTHOR
+# Jefferson 'slackjeff' Rocha <root@slackjeff.com.br>
+#
+#100% Slackware Free.
+#====================================================================|
+
+#===========================| VARS
+slackpkg_conf="/etc/slackpkg/slackpkg.conf"
+slackpkg_mirror="/etc/slackpkg/mirrors"
+
+#===========================| TEST
+[ "$UID" != '0' ] && { echo "Need Root."; exit 1 ;}
+
+#===========================| MAIN
+# Add repository
+mv "$slackpkg_mirror" "${slackpkg_mirror}.bkp"
+
+cat <<EOF >>"$slackpkg_mirror"
+####################################
+# Mirror Generate with Slacklibre. #
+#----------------------------------#
+# Slackware64-14.2                 #
+#----------------------------------#
+####################################
+# 100% Libre
+http://freeslack.net/fxp/freeslack64-14.2/
+EOF
+
+# Slackkey ADD
+if ! grep 'SLACKKEY="Connie Dobbs' "$slackpkg_conf" ; then
+    sed '/#SLACKKEY/a SLACKKEY="Connie Dobbs (Free eXpansion Pack for Slackware)"' "$slackpkg_conf"
+fi
+
+# Update gpg, and mirror
+slackpkg update gpg && slackpkg update
+
+# Remove Packages
+echo "Remove Packages..."; sleep 2s
+removepkg                 \
+    getty-ps              \
+    lha                   \
+    unarj                 \
+    amp                   \
+    seamonkey-solibs      \
+    bluez-firmware        \
+    ipw2100               \
+    ipw2200               \
+    trn                   \
+    zd1211-firmware       \
+    font-bh-ttf           \
+    font-bh-type1         \
+    mozilla-thunderbird   \
+    mozilla-firefox       \
+    seamonkey             \
+    xfractint             \
+    xgames                \
+    xv                    \
+    kernel-firmware       \
+    kernel-generic        \
+    kernel-huge           \
+    kernel-modules        \
+    kernel-headers        \
+    kernel-source    
+
+# Install Libre Kernel
+echo "Install Linux Libre..."; sleep 2s
+slackpkg install         \
+    linux-libre-headers  \
+    linux-libre-image    \
+    linux-libre-source
+
+# If have sbopkg, run and install icecat
+if which sbopkg &>/dev/null; then
+    sbopkg -i Icecat
+else
+    echo "U dont have sbopkg, please visit slackbuilds.org and install Icecat"
+    echo "Or other Browser =)"
+    echo "Don't use binary, compile is a life."
+fi
+
+echo '
+Now Adjust your lilo.conf, for Generic Linux Libre Kernel:
+/usr/share/mkinitrd/mkinitrd_command_generator.sh
+
+Follow steps and add new call in /etc/lilo.conf.
+Final step, run lilo! =)
+'
