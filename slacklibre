@@ -72,13 +72,13 @@ slackpkg install         \
     linux-libre-source
 
 # If have sbopkg, run and install icecat
-if which sbopkg &>/dev/null; then
-    sbopkg -i Icecat
-else
-    echo "U dont have sbopkg, please visit slackbuilds.org and install Icecat"
-    echo "Or other Browser =)"
-    echo "Don't use binary, compile is a life."
-fi
+#if which sbopkg &>/dev/null; then
+#    sbopkg -i Icecat
+#else
+#    echo "U dont have sbopkg, please visit slackbuilds.org and install Icecat"
+#    echo "Or other Browser =)"
+#    echo "Don't use binary, compile is a life."
+#fi
 
 echo '
 Now Adjust your lilo.conf, for Generic Linux Libre Kernel:
